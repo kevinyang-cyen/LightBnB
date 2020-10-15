@@ -20,8 +20,8 @@ const getUserWithEmail = function(email) {
   SELECT * FROM users
   WHERE email = $1;
   `, [email])
-  .then(res => res.rows[0]);
-}
+    .then(res => res.rows[0]);
+};
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
@@ -34,8 +34,8 @@ const getUserWithId = function(id) {
   SELECT * FROM users
   WHERE id = $1;
   `, [id])
-  .then(res => res.rows[0]);
-}
+    .then(res => res.rows[0]);
+};
 exports.getUserWithId = getUserWithId;
 
 
@@ -50,8 +50,8 @@ const addUser =  function(user) {
   VALUES ($1, $2, $3)
   RETURNING *
   `, [user.name, user.email, user.password])
-  .then(res => res.rows[0]);
-}
+    .then(res => res.rows[0]);
+};
 exports.addUser = addUser;
 
 /// Reservations
@@ -73,8 +73,8 @@ const getAllReservations = function(guest_id, limit = 10) {
   ORDER BY reservations.start_date
   LIMIT $2;
   `, [guest_id, limit])
-  .then(res => res.rows);
-}
+    .then(res => res.rows);
+};
 exports.getAllReservations = getAllReservations;
 
 /// Properties
@@ -106,15 +106,15 @@ const getAllProperties = function(options, limit = 10) {
   }
 
   if (options.minimum_price_per_night && options.maximum_price_per_night) {
-    queryParams.push(options.minimum_price_per_night*100);
+    queryParams.push(options.minimum_price_per_night * 100);
     queryString += `AND cost_per_night > $${queryParams.length} `;
-    queryParams.push(options.maximum_price_per_night*100);
+    queryParams.push(options.maximum_price_per_night * 100);
     queryString += `AND cost_per_night < $${queryParams.length} `;
   }
-
+  
   queryString += `
   GROUP BY properties.id
-  `
+  `;
 
   if (options.minimum_rating) {
     queryParams.push(options.minimum_rating);
@@ -127,9 +127,11 @@ const getAllProperties = function(options, limit = 10) {
   LIMIT $${queryParams.length};
   `;
 
+  console.log(queryString, queryParams);
+
   return pool.query(queryString, queryParams)
-  .then(res => res.rows);
-}
+    .then(res => res.rows);
+};
 exports.getAllProperties = getAllProperties;
 
 
@@ -143,5 +145,5 @@ const addProperty = function(property) {
   property.id = propertyId;
   properties[propertyId] = property;
   return Promise.resolve(property);
-}
+};
 exports.addProperty = addProperty;
